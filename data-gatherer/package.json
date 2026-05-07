@@ -1,0 +1,8 @@
+{
+  "name": "mplus-loot-gatherer",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^17.4.2"
+  }
+}

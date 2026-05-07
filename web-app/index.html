@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mythic+ Loot Optimizer</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+  body {
+    background: #0f1115;
+    color: #e8eaed;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+
+  /* ---------------- CARDS ---------------- */
+
+  .card {
+    background: #161a22;
+    border: 1px solid #2a2f3a;
+    border-radius: 12px;
+  }
+
+  /* ---------------- HEADINGS ---------------- */
+
+  h2 {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .dungeon-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e6edf3;
+    letter-spacing: 0.2px;
+  }
+
+  /* ---------------- TEXT ---------------- */
+
+  p {
+    color: #b6c2cf;
+    margin-bottom: 0.5rem;
+  }
+
+  .muted {
+    color: #8b98a5;
+    font-size: 0.9rem;
+  }
+
+  .config-label {
+    color: #9fb0c0;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ---------------- ITEMS ---------------- */
+
+  .item {
+    font-size: 0.9rem;
+    padding: 6px 0;
+    color: #d6dde6;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .item:last-child {
+    border-bottom: none;
+  }
+
+  .high-value {
+    color: #7CFC98;
+    font-weight: 600;
+  }
+
+  .medium-value {
+    color: #ffd166;
+    font-weight: 500;
+  }
+
+  /* ---------------- BUTTONS ---------------- */
+
+  .icon-btn {
+    background: #161a22;
+    border: 1px solid #2a2f3a;
+    color: #e6edf3;
+    padding: 10px 12px;
+    margin: 4px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    min-width: 90px;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .icon-btn:hover {
+    border-color: #3a4250;
+    transform: translateY(-1px);
+  }
+
+  .icon-btn.active {
+    border-color: #7CFC98;
+    box-shadow: 0 0 0 2px rgba(124,252,152,0.15);
+  }
+
+  /* ---------------- FORMS ---------------- */
+
+  .form-label {
+    color: #c9d1d9;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .form-select {
+    background-color: #161a22;
+    color: #e6edf3;
+    border: 1px solid #2a2f3a;
+  }
+
+  .form-select option {
+    background-color: #161a22;
+    color: #e6edf3;
+  }
+
+  .form-select:focus {
+    background-color: #161a22;
+    color: #ffffff;
+    border-color: #7CFC98;
+    box-shadow: 0 0 0 0.15rem rgba(124,252,152,0.2);
+  }
+
+  /* ---------------- CONFIG PANEL ---------------- */
+
+  #activeConfig {
+    color: #c9d1d9;
+    font-size: 0.9rem;
+  }
+
+  /* ---------------- DIVIDERS ---------------- */
+
+  hr {
+    border-color: #2a2f3a;
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="container py-4">
+
+  <h2 class="mb-3">Mythic+ Loot Optimizer</h2>
+
+  <p>
+    Note: This isn't 100% accurate and it can't differentiate between str, agi, and int weapons.
+  </p>
+
+  <p>
+    Note: Only remotely correct for Druid, DK, DH, Monk, Shaman, and Hunter
+  </p>
+
+  <p>
+    Note: Pit of Saron and Skyreach are likely screwy because of how Blizzard API works. Items will need to be manually edited.
+  </p>
+
+  <p>
+    Note: This doesn't include trinkets, you should just know which is best.
+  </p>
+
+  <div id="classButtons" class="mb-3"></div>
+
+  <div id="specButtons" class="mb-3"></div>
+
+  <!-- OVERRIDES -->
+
+  <div class="card p-3 mb-3">
+
+    <div class="row">
+
+      <div class="col-md-3">
+        <label class="form-label">Required Override</label>
+
+        <select id="requiredOverride" class="form-select">
+          <option value="">None</option>
+          <option>Critical Strike</option>
+          <option>Haste</option>
+          <option>Mastery</option>
+          <option>Versatility</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Preferred Override</label>
+
+        <select id="preferredOverride" class="form-select">
+          <option value="">None</option>
+          <option>Critical Strike</option>
+          <option>Haste</option>
+          <option>Mastery</option>
+          <option>Versatility</option>
+        </select>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ACTIVE CONFIG -->
+
+  <div id="activeConfig" class="card p-3 mb-3"></div>
+
+  <!-- RESULTS -->
+
+  <div id="results"></div>
+
+</div>
+
+<script src="class_configs.js"></script>
+
+<script>
+
+let data = [];
+
+let selectedClass = null;
+let selectedSpec = null;
+
+/* ---------------- ICONS ---------------- */
+
+const classIcons = {
+  Warrior: "⚔️",
+  DemonHunter: "😈",
+  Paladin: "🛡️",
+  Hunter: "🏹",
+  Rogue: "🗡️",
+  Priest: "✝️",
+  DeathKnight: "💀",
+  Shaman: "🌊",
+  Mage: "🔥",
+  Warlock: "👁️",
+  Monk: "🥋",
+  Druid: "🌿",
+  Evoker: "🐉"
+};
+
+/* ---------------- LOAD DATA ---------------- */
+
+fetch("midnight_season_1.json")
+  .then(r => r.json())
+  .then(json => {
+    data = json;
+    initUI();
+  });
+
+/* ---------------- UI INIT ---------------- */
+
+function initUI() {
+
+  const classButtons = document.getElementById("classButtons");
+
+  Object.keys(classConfig).forEach(cls => {
+
+    const btn = document.createElement("button");
+
+    btn.className = "icon-btn";
+
+    btn.innerHTML =
+      `${classIcons[cls] || "❓"}<div style="font-size:0.75rem">${cls}</div>`;
+
+    btn.onclick = () => {
+
+      selectedClass = cls;
+      selectedSpec = null;
+
+      document
+        .querySelectorAll("#classButtons .icon-btn")
+        .forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      loadSpecs(cls);
+    };
+
+    classButtons.appendChild(btn);
+  });
+
+  document
+    .getElementById("requiredOverride")
+    .addEventListener("change", run);
+
+  document
+    .getElementById("preferredOverride")
+    .addEventListener("change", run);
+}
+
+/* ---------------- SPECS ---------------- */
+
+function loadSpecs(cls) {
+
+  const specButtons = document.getElementById("specButtons");
+
+  specButtons.innerHTML = "";
+
+  Object.keys(classConfig[cls]).forEach(spec => {
+
+    const btn = document.createElement("button");
+
+    btn.className = "icon-btn";
+
+    btn.innerHTML =
+      `${spec}<div style="font-size:0.75rem">Spec</div>`;
+
+    btn.onclick = () => {
+
+      selectedSpec = spec;
+
+      document
+        .querySelectorAll("#specButtons .icon-btn")
+        .forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      run();
+    };
+
+    specButtons.appendChild(btn);
+  });
+}
+
+/* ---------------- CONFIG ---------------- */
+
+function getSpecConfig() {
+
+  if (!selectedClass || !selectedSpec) return null;
+
+  const base = structuredClone(
+    classConfig[selectedClass][selectedSpec]
+  );
+
+  const requiredOverride =
+    document.getElementById("requiredOverride").value;
+
+  const preferredOverride =
+    document.getElementById("preferredOverride").value;
+
+  if (requiredOverride) {
+    base.required = [requiredOverride];
+  }
+
+  if (preferredOverride) {
+    base.preferred = [preferredOverride];
+  }
+
+  return base;
+}
+
+function renderActiveConfig(spec) {
+
+  const container = document.getElementById("activeConfig");
+
+  container.innerHTML = `
+    <div class="row">
+
+      <div class="col-md-3">
+        <div class="config-label">Required</div>
+        ${spec.required?.join(", ") || "None"}
+      </div>
+
+      <div class="col-md-3">
+        <div class="config-label">Preferred</div>
+        ${spec.preferred?.join(", ") || "None"}
+      </div>
+
+      <div class="col-md-3">
+        <div class="config-label">Armor</div>
+        ${spec.armor?.join(", ") || "None"}
+      </div>
+
+      <div class="col-md-3">
+        <div class="config-label">Weapons</div>
+        ${spec.weapons?.join(", ") || "None"}
+      </div>
+
+    </div>
+  `;
+}
+
+/* ---------------- FILTERING ---------------- */
+
+function isWeaponAllowed(item, spec) {
+
+  if (item.itemClass !== "Weapon") return true;
+
+  const weaponType =
+    (item.inventoryType + " " + item.itemSubClass).toLowerCase();
+
+  return spec.weapons.some(w =>
+    weaponType === w.toLowerCase()
+  );
+}
+
+function isValidItem(item, spec) {
+
+  if (
+    item.inventoryType === "Finger" ||
+    item.inventoryType === "Back" ||
+    item.inventoryType === "Neck"
+  ) {
+    return true;
+  }
+
+  if (item.itemClass === "Armor" && item.itemSubClass) {
+
+    if (!spec.armor.includes(item.itemSubClass)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/* ---------------- CLASSIFY ---------------- */
+
+function getStats(item) {
+  return [
+    item.firstSecondary,
+    item.secondSecondary
+  ].filter(Boolean);
+}
+
+function classifyItem(item, spec) {
+
+  const stats = getStats(item);
+
+  const required = spec.required || [];
+  const preferred = spec.preferred || [];
+
+  if (required.length == 1) {
+
+    const hasAnyRequired =
+      required.some(r => stats.includes(r));
+
+    const hasPreferred =
+      stats.every(s =>
+        preferred.includes(s) ||
+        required.includes(s)
+      );
+
+    if (hasAnyRequired && hasPreferred) return "high";
+
+    if (!hasAnyRequired && hasPreferred) return "medium";
+
+  } else if (required.length > 1) {
+
+    const hasAllRequired =
+      stats.every(s => required.includes(s));
+
+    const hasAnyRequired =
+      required.some(r => stats.includes(r));
+
+    const hasPreferred =
+      stats.some(s => preferred.includes(s));
+
+    if (hasAllRequired) return "high";
+
+    if (hasAnyRequired && hasPreferred) return "medium";
+
+  } else {
+
+    const hasPreferred =
+      stats.every(s => preferred.includes(s));
+
+    if (hasPreferred) return "high";
+  }
+
+  return null;
+}
+
+/* ---------------- BUILD DUNGEONS ---------------- */
+
+function buildDungeons(items, spec) {
+
+  const dungeons = {};
+
+  for (const item of items) {
+
+    if (!isWeaponAllowed(item, spec)) continue;
+
+    if (!isValidItem(item, spec)) continue;
+
+    const tier = classifyItem(item, spec);
+
+    if (!tier) continue;
+
+    if (!dungeons[item.dungeon]) {
+
+      dungeons[item.dungeon] = {
+        high: 0,
+        medium: 0,
+        items: []
+      };
+    }
+
+    dungeons[item.dungeon].items.push({
+      ...item,
+      tier
+    });
+
+    if (tier === "high") {
+      dungeons[item.dungeon].high++;
+    }
+
+    if (tier === "medium") {
+      dungeons[item.dungeon].medium++;
+    }
+  }
+
+  return Object.entries(dungeons)
+    .map(([name, d]) => ({
+      dungeon: name,
+      highValueCount: d.high,
+      mediumValueCount: d.medium,
+      items: d.items
+    }))
+    .sort((a, b) =>
+      (b.highValueCount * 2 + b.mediumValueCount) -
+      (a.highValueCount * 2 + a.mediumValueCount)
+    );
+}
+
+/* ---------------- RUN ---------------- */
+
+function run() {
+
+  const spec = getSpecConfig();
+
+  if (!spec) return;
+
+  renderActiveConfig(spec);
+
+  const results = buildDungeons(data, spec);
+
+  const container = document.getElementById("results");
+
+  container.innerHTML = "";
+
+  results.forEach(d => {
+
+    const card = document.createElement("div");
+
+    card.className = "card p-3 mb-3";
+
+    let html = `
+      <div class="dungeon-title">${d.dungeon}</div>
+
+      <div class="muted mb-2">
+        High: ${d.highValueCount}
+        |
+        Medium: ${d.mediumValueCount}
+      </div>
+    `;
+
+    const highItems = d.items
+      .filter(i => i.tier === "high")
+      .sort((a, b) =>
+        a.inventoryType.localeCompare(b.inventoryType)
+      );
+
+    const mediumItems = d.items
+      .filter(i => i.tier === "medium")
+      .sort((a, b) =>
+        a.inventoryType.localeCompare(b.inventoryType)
+      );
+
+    if (highItems.length) {
+
+      html += `
+        <div class="high-value mb-1">
+          High Value Drops
+        </div>
+      `;
+
+      highItems.forEach(i => {
+
+        html += `
+          <div class="item high-value">
+
+            <strong>
+              [${i.inventoryType}${i.itemSubClass ? " " + i.itemSubClass : ""}]
+            </strong>
+
+            ${i.itemName}
+
+            (${i.firstSecondary || "-"} / ${i.secondSecondary || "-"})
+
+          </div>
+        `;
+      });
+    }
+
+    if (mediumItems.length) {
+
+      html += `
+        <div class="medium-value mt-3 mb-1">
+          Medium Value Drops
+        </div>
+      `;
+
+      mediumItems.forEach(i => {
+
+        html += `
+          <div class="item medium-value">
+
+            <strong>
+              [${i.inventoryType}${i.itemSubClass ? " " + i.itemSubClass : ""}]
+            </strong>
+
+            ${i.itemName}
+
+            (${i.firstSecondary || "-"} / ${i.secondSecondary || "-"})
+
+          </div>
+        `;
+      });
+    }
+
+    card.innerHTML = html;
+
+    container.appendChild(card);
+  });
+}
+
+</script>
+
+</body>
+</html>

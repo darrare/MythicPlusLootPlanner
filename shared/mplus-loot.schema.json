@@ -1,0 +1,9 @@
+{
+  "dungeon": "string",
+  "itemName": "string",
+  "itemId": "number",
+  "primarySecondaryStat": "string | null",
+  "secondarySecondaryStat": "string | null",
+  "itemType": "string",
+  "itemSlot": "string"
+}
