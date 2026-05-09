@@ -1,364 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mythic+ Loot Optimizer</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-  body {
-    background: #0f1115;
-    color: #e8eaed;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
+  <style>
+    body {
+      background: #0f1115;
+      color: #e8eaed;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
 
-  /* ---------------- CARDS ---------------- */
+    /* ---------------- CARDS ---------------- */
 
-  .card {
-    background: #161a22;
-    border: 1px solid #2a2f3a;
-    border-radius: 12px;
-  }
+    .card {
+      background: #161a22;
+      border: 1px solid #2a2f3a;
+      border-radius: 12px;
+    }
 
-  /* ---------------- HEADINGS ---------------- */
+    /* ---------------- HEADINGS ---------------- */
 
-  h2 {
-    color: #ffffff;
-    font-weight: 700;
-  }
+    h2 {
+      color: #ffffff;
+      font-weight: 700;
+    }
 
-  .dungeon-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #e6edf3;
-    letter-spacing: 0.2px;
-  }
+    .dungeon-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #e6edf3;
+      letter-spacing: 0.2px;
+    }
 
-  /* ---------------- TEXT ---------------- */
+    /* ---------------- TEXT ---------------- */
 
-  p {
-    color: #b6c2cf;
-    margin-bottom: 0.5rem;
-  }
+    p {
+      color: #b6c2cf;
+      margin-bottom: 0.5rem;
+    }
 
-  .muted {
-    color: #8b98a5;
-    font-size: 0.9rem;
-  }
+    .muted {
+      color: #8b98a5;
+      font-size: 0.9rem;
+    }
 
-  .config-label {
-    color: #9fb0c0;
-    font-size: 0.75rem;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+    .config-label {
+      color: #9fb0c0;
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
 
-  /* ---------------- ITEMS ---------------- */
+    /* ---------------- ITEMS ---------------- */
 
-  .item {
-    font-size: 0.9rem;
-    padding: 6px 0;
-    color: #d6dde6;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
+    .item {
+      font-size: 0.9rem;
+      padding: 6px 0;
+      color: #d6dde6;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
 
-  .item:last-child {
-    border-bottom: none;
-  }
+    .item:last-child {
+      border-bottom: none;
+    }
 
-  .high-value {
-    color: #7CFC98;
-    font-weight: 600;
-  }
+    .high-value {
+      color: #7CFC98;
+      font-weight: 600;
+    }
 
-  .medium-value {
-    color: #ffd166;
-    font-weight: 500;
-  }
+    .medium-value {
+      color: #ffd166;
+      font-weight: 500;
+    }
 
-  /* ---------------- BUTTONS ---------------- */
+    .low-value {
+      color: #7f8a99;
+      font-weight: 400;
+    }
 
-  .icon-btn {
-    background: #161a22;
-    border: 1px solid #2a2f3a;
-    color: #e6edf3;
-    padding: 10px 12px;
-    margin: 4px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 1rem;
-    min-width: 90px;
-    transition: all 0.15s ease-in-out;
-  }
+    /* ---------------- BUTTONS ---------------- */
 
-  .icon-btn:hover {
-    border-color: #3a4250;
-    transform: translateY(-1px);
-  }
+    .icon-btn {
+      background: #161a22;
+      border: 1px solid #2a2f3a;
+      color: #e6edf3;
+      padding: 10px 12px;
+      margin: 4px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      min-width: 90px;
+      transition: all 0.15s ease-in-out;
+    }
 
-  .icon-btn.active {
-    border-color: #7CFC98;
-    box-shadow: 0 0 0 2px rgba(124,252,152,0.15);
-  }
+    .icon-btn:hover {
+      border-color: #3a4250;
+      transform: translateY(-1px);
+    }
 
-  /* ---------------- FORMS ---------------- */
+    .icon-btn.active {
+      border-color: #7CFC98;
+      box-shadow: 0 0 0 2px rgba(124, 252, 152, 0.15);
+    }
 
-  .form-label {
-    color: #c9d1d9;
-    font-size: 0.85rem;
-    margin-bottom: 6px;
-  }
+    /* ---------------- FORMS ---------------- */
 
-  .form-select {
-    background-color: #161a22;
-    color: #e6edf3;
-    border: 1px solid #2a2f3a;
-  }
+    .form-label {
+      color: #c9d1d9;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
 
-  .form-select option {
-    background-color: #161a22;
-    color: #e6edf3;
-  }
+    .form-select {
+      background-color: #161a22;
+      color: #e6edf3;
+      border: 1px solid #2a2f3a;
+    }
 
-  .form-select:focus {
-    background-color: #161a22;
-    color: #ffffff;
-    border-color: #7CFC98;
-    box-shadow: 0 0 0 0.15rem rgba(124,252,152,0.2);
-  }
+    .form-select option {
+      background-color: #161a22;
+      color: #e6edf3;
+    }
 
-  /* ---------------- CONFIG PANEL ---------------- */
+    .form-select:focus {
+      background-color: #161a22;
+      color: #ffffff;
+      border-color: #7CFC98;
+      box-shadow: 0 0 0 0.15rem rgba(124, 252, 152, 0.2);
+    }
 
-  #activeConfig {
-    color: #c9d1d9;
-    font-size: 0.9rem;
-  }
+    /* ---------------- CONFIG PANEL ---------------- */
 
-  /* ---------------- DIVIDERS ---------------- */
-
-  hr {
-    border-color: #2a2f3a;
-  }
-
-</style>
+    #activeConfig {
+      color: #c9d1d9;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container py-4">
+  <div class="container py-4">
 
-  <h2 class="mb-3">Mythic+ Loot Optimizer</h2>
+    <h2 class="mb-3">Mythic+ Loot Optimizer</h2>
 
-  <p>
-    Note: This isn't 100% accurate and it can't differentiate between str, agi, and int weapons.
-  </p>
+    <p>
+      Note: This isn't 100% accurate and it can't differentiate between str, agi, and int weapons.
+    </p>
 
-  <p>
-    Note: Only remotely correct for Druid, DK, DH, Monk, Shaman, and Hunter
-  </p>
+    <p>
+      Note: Only remotely correct for Druid, DK, DH, Monk, Shaman, and Hunter.
+    </p>
 
-  <p>
-    Note: Pit of Saron and Skyreach are likely screwy because of how Blizzard API works. Items will need to be manually edited.
-  </p>
+    <p>
+      Note: Pit of Saron and Skyreach are likely screwy because of how Blizzard API works.
+    </p>
 
-  <p>
-    Note: This doesn't include trinkets, you should just know which is best.
-  </p>
+    <p>
+      Note: Trinkets are intentionally ignored.
+    </p>
 
-  <div id="classButtons" class="mb-3"></div>
+    <div id="classButtons" class="mb-3"></div>
 
-  <div id="specButtons" class="mb-3"></div>
+    <div id="specButtons" class="mb-3"></div>
 
-  <!-- OVERRIDES -->
+    <!-- OVERRIDES -->
 
-  <div class="card p-3 mb-3">
+    <div class="card p-3 mb-3">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="col-md-3">
-        <label class="form-label">Required Override</label>
+        <div class="col-md-3">
+          <label class="form-label">Required Override</label>
 
-        <select id="requiredOverride" class="form-select">
-          <option value="">None</option>
-          <option>Critical Strike</option>
-          <option>Haste</option>
-          <option>Mastery</option>
-          <option>Versatility</option>
-        </select>
-      </div>
+          <select id="requiredOverride" class="form-select">
+            <option value="">None</option>
+            <option>Critical Strike</option>
+            <option>Haste</option>
+            <option>Mastery</option>
+            <option>Versatility</option>
+          </select>
+        </div>
 
-      <div class="col-md-3">
-        <label class="form-label">Preferred Override</label>
+        <div class="col-md-3">
+          <label class="form-label">Preferred Override</label>
 
-        <select id="preferredOverride" class="form-select">
-          <option value="">None</option>
-          <option>Critical Strike</option>
-          <option>Haste</option>
-          <option>Mastery</option>
-          <option>Versatility</option>
-        </select>
+          <select id="preferredOverride" class="form-select">
+            <option value="">None</option>
+            <option>Critical Strike</option>
+            <option>Haste</option>
+            <option>Mastery</option>
+            <option>Versatility</option>
+          </select>
+        </div>
+
       </div>
 
     </div>
 
+    <!-- ACTIVE CONFIG -->
+
+    <div id="activeConfig" class="card p-3 mb-3"></div>
+
+    <!-- RESULTS -->
+
+    <div id="results"></div>
+
   </div>
 
-  <!-- ACTIVE CONFIG -->
+  <script src="class_configs.js"></script>
 
-  <div id="activeConfig" class="card p-3 mb-3"></div>
+  <script>
 
-  <!-- RESULTS -->
+    let data = [];
 
-  <div id="results"></div>
+    let selectedClass = null;
+    let selectedSpec = null;
 
-</div>
+    /* ---------------- ICONS ---------------- */
 
-<script src="class_configs.js"></script>
-
-<script>
-
-let data = [];
-
-let selectedClass = null;
-let selectedSpec = null;
-
-/* ---------------- ICONS ---------------- */
-
-const classIcons = {
-  Warrior: "⚔️",
-  DemonHunter: "😈",
-  Paladin: "🛡️",
-  Hunter: "🏹",
-  Rogue: "🗡️",
-  Priest: "✝️",
-  DeathKnight: "💀",
-  Shaman: "🌊",
-  Mage: "🔥",
-  Warlock: "👁️",
-  Monk: "🥋",
-  Druid: "🌿",
-  Evoker: "🐉"
-};
-
-/* ---------------- LOAD DATA ---------------- */
-
-fetch("midnight_season_1.json")
-  .then(r => r.json())
-  .then(json => {
-    data = json;
-    initUI();
-  });
-
-/* ---------------- UI INIT ---------------- */
-
-function initUI() {
-
-  const classButtons = document.getElementById("classButtons");
-
-  Object.keys(classConfig).forEach(cls => {
-
-    const btn = document.createElement("button");
-
-    btn.className = "icon-btn";
-
-    btn.innerHTML =
-      `${classIcons[cls] || "❓"}<div style="font-size:0.75rem">${cls}</div>`;
-
-    btn.onclick = () => {
-
-      selectedClass = cls;
-      selectedSpec = null;
-
-      document
-        .querySelectorAll("#classButtons .icon-btn")
-        .forEach(b => b.classList.remove("active"));
-
-      btn.classList.add("active");
-
-      loadSpecs(cls);
+    const classIcons = {
+      Warrior: "⚔️",
+      DemonHunter: "😈",
+      Paladin: "🛡️",
+      Hunter: "🏹",
+      Rogue: "🗡️",
+      Priest: "✝️",
+      DeathKnight: "💀",
+      Shaman: "🌊",
+      Mage: "🔥",
+      Warlock: "👁️",
+      Monk: "🥋",
+      Druid: "🌿",
+      Evoker: "🐉"
     };
 
-    classButtons.appendChild(btn);
-  });
+    /* ---------------- LOAD DATA ---------------- */
 
-  document
-    .getElementById("requiredOverride")
-    .addEventListener("change", run);
+    fetch("midnight_season_1.json")
+      .then(r => r.json())
+      .then(json => {
+        data = json;
+        initUI();
+      });
 
-  document
-    .getElementById("preferredOverride")
-    .addEventListener("change", run);
-}
+    /* ---------------- UI INIT ---------------- */
 
-/* ---------------- SPECS ---------------- */
+    function initUI() {
 
-function loadSpecs(cls) {
+      const classButtons = document.getElementById("classButtons");
 
-  const specButtons = document.getElementById("specButtons");
+      Object.keys(classConfig).forEach(cls => {
 
-  specButtons.innerHTML = "";
+        const btn = document.createElement("button");
 
-  Object.keys(classConfig[cls]).forEach(spec => {
+        btn.className = "icon-btn";
 
-    const btn = document.createElement("button");
+        btn.innerHTML =
+          `${classIcons[cls] || "❓"}<div style="font-size:0.75rem">${cls}</div>`;
 
-    btn.className = "icon-btn";
+        btn.onclick = () => {
 
-    btn.innerHTML =
-      `${spec}<div style="font-size:0.75rem">Spec</div>`;
+          selectedClass = cls;
+          selectedSpec = null;
 
-    btn.onclick = () => {
+          document
+            .querySelectorAll("#classButtons .icon-btn")
+            .forEach(b => b.classList.remove("active"));
 
-      selectedSpec = spec;
+          btn.classList.add("active");
+
+          loadSpecs(cls);
+        };
+
+        classButtons.appendChild(btn);
+      });
 
       document
-        .querySelectorAll("#specButtons .icon-btn")
-        .forEach(b => b.classList.remove("active"));
+        .getElementById("requiredOverride")
+        .addEventListener("change", run);
 
-      btn.classList.add("active");
+      document
+        .getElementById("preferredOverride")
+        .addEventListener("change", run);
+    }
 
-      run();
-    };
+    /* ---------------- SPECS ---------------- */
 
-    specButtons.appendChild(btn);
-  });
-}
+    function loadSpecs(cls) {
 
-/* ---------------- CONFIG ---------------- */
+      const specButtons = document.getElementById("specButtons");
 
-function getSpecConfig() {
+      specButtons.innerHTML = "";
 
-  if (!selectedClass || !selectedSpec) return null;
+      Object.keys(classConfig[cls]).forEach(spec => {
 
-  const base = structuredClone(
-    classConfig[selectedClass][selectedSpec]
-  );
+        const btn = document.createElement("button");
 
-  const requiredOverride =
-    document.getElementById("requiredOverride").value;
+        btn.className = "icon-btn";
 
-  const preferredOverride =
-    document.getElementById("preferredOverride").value;
+        btn.innerHTML =
+          `${spec}<div style="font-size:0.75rem">Spec</div>`;
 
-  if (requiredOverride) {
-    base.required = [requiredOverride];
-  }
+        btn.onclick = () => {
 
-  if (preferredOverride) {
-    base.preferred = [preferredOverride];
-  }
+          selectedSpec = spec;
 
-  return base;
-}
+          document
+            .querySelectorAll("#specButtons .icon-btn")
+            .forEach(b => b.classList.remove("active"));
 
-function renderActiveConfig(spec) {
+          btn.classList.add("active");
 
-  const container = document.getElementById("activeConfig");
+          run();
+        };
 
-  container.innerHTML = `
+        specButtons.appendChild(btn);
+      });
+    }
+
+    /* ---------------- CONFIG ---------------- */
+
+    function getSpecConfig() {
+
+      if (!selectedClass || !selectedSpec) return null;
+
+      const base = structuredClone(
+        classConfig[selectedClass][selectedSpec]
+      );
+
+      const requiredOverride =
+        document.getElementById("requiredOverride").value;
+
+      const preferredOverride =
+        document.getElementById("preferredOverride").value;
+
+      if (requiredOverride) {
+        base.required = [requiredOverride];
+      }
+
+      if (preferredOverride) {
+        base.preferred = [preferredOverride];
+      }
+
+      return base;
+    }
+
+    function renderActiveConfig(spec) {
+
+      const container = document.getElementById("activeConfig");
+
+      container.innerHTML = `
     <div class="row">
 
       <div class="col-md-3">
@@ -383,206 +382,224 @@ function renderActiveConfig(spec) {
 
     </div>
   `;
-}
-
-/* ---------------- FILTERING ---------------- */
-
-function isWeaponAllowed(item, spec) {
-
-  if (item.itemClass !== "Weapon") return true;
-
-  const weaponType =
-    (item.inventoryType + " " + item.itemSubClass).toLowerCase();
-
-  return spec.weapons.some(w =>
-    weaponType === w.toLowerCase()
-  );
-}
-
-function isValidItem(item, spec) {
-
-  if (
-    item.inventoryType === "Finger" ||
-    item.inventoryType === "Back" ||
-    item.inventoryType === "Neck"
-  ) {
-    return true;
-  }
-
-  if (item.itemClass === "Armor" && item.itemSubClass) {
-
-    if (!spec.armor.includes(item.itemSubClass)) {
-      return false;
     }
-  }
 
-  return true;
-}
+    /* ---------------- FILTERING ---------------- */
 
-/* ---------------- CLASSIFY ---------------- */
+    function isWeaponAllowed(item, spec) {
 
-function getStats(item) {
-  return [
-    item.firstSecondary,
-    item.secondSecondary
-  ].filter(Boolean);
-}
+      if (item.itemClass !== "Weapon") return true;
 
-function classifyItem(item, spec) {
+      const weaponType =
+        (item.inventoryType + " " + item.itemSubClass).toLowerCase();
 
-  const stats = getStats(item);
-
-  const required = spec.required || [];
-  const preferred = spec.preferred || [];
-
-  if (required.length == 1) {
-
-    const hasAnyRequired =
-      required.some(r => stats.includes(r));
-
-    const hasPreferred =
-      stats.every(s =>
-        preferred.includes(s) ||
-        required.includes(s)
+      return spec.weapons.some(w =>
+        weaponType === w.toLowerCase()
       );
-
-    if (hasAnyRequired && hasPreferred) return "high";
-
-    if (!hasAnyRequired && hasPreferred) return "medium";
-
-  } else if (required.length > 1) {
-
-    const hasAllRequired =
-      stats.every(s => required.includes(s));
-
-    const hasAnyRequired =
-      required.some(r => stats.includes(r));
-
-    const hasPreferred =
-      stats.some(s => preferred.includes(s));
-
-    if (hasAllRequired) return "high";
-
-    if (hasAnyRequired && hasPreferred) return "medium";
-
-  } else {
-
-    const hasPreferred =
-      stats.every(s => preferred.includes(s));
-
-    if (hasPreferred) return "high";
-  }
-
-  return null;
-}
-
-/* ---------------- BUILD DUNGEONS ---------------- */
-
-function buildDungeons(items, spec) {
-
-  const dungeons = {};
-
-  for (const item of items) {
-
-    if (!isWeaponAllowed(item, spec)) continue;
-
-    if (!isValidItem(item, spec)) continue;
-
-    const tier = classifyItem(item, spec);
-
-    if (!tier) continue;
-
-    if (!dungeons[item.dungeon]) {
-
-      dungeons[item.dungeon] = {
-        high: 0,
-        medium: 0,
-        items: []
-      };
     }
 
-    dungeons[item.dungeon].items.push({
-      ...item,
-      tier
-    });
+    function isValidItem(item, spec) {
 
-    if (tier === "high") {
-      dungeons[item.dungeon].high++;
+      if (
+        item.inventoryType === "Finger" ||
+        item.inventoryType === "Back" ||
+        item.inventoryType === "Neck"
+      ) {
+        return true;
+      }
+
+      if (item.itemClass === "Armor" && item.itemSubClass) {
+
+        if (!spec.armor.includes(item.itemSubClass)) {
+          return false;
+        }
+      }
+
+      return true;
     }
 
-    if (tier === "medium") {
-      dungeons[item.dungeon].medium++;
+    /* ---------------- CLASSIFY ---------------- */
+
+    function getStats(item) {
+      return [
+        item.firstSecondary,
+        item.secondSecondary
+      ].filter(Boolean);
     }
-  }
 
-  return Object.entries(dungeons)
-    .map(([name, d]) => ({
-      dungeon: name,
-      highValueCount: d.high,
-      mediumValueCount: d.medium,
-      items: d.items
-    }))
-    .sort((a, b) =>
-      (b.highValueCount * 2 + b.mediumValueCount) -
-      (a.highValueCount * 2 + a.mediumValueCount)
-    );
-}
+    function classifyItem(item, spec) {
 
-/* ---------------- RUN ---------------- */
+      const stats = getStats(item);
 
-function run() {
+      const required = spec.required || [];
+      const preferred = spec.preferred || [];
 
-  const spec = getSpecConfig();
+      if (required.length == 1) {
 
-  if (!spec) return;
+        const hasAnyRequired =
+          required.some(r => stats.includes(r));
 
-  renderActiveConfig(spec);
+        const hasPreferred =
+          stats.every(s =>
+            preferred.includes(s) ||
+            required.includes(s)
+          );
 
-  const results = buildDungeons(data, spec);
+        if (hasAnyRequired && hasPreferred) return "high";
 
-  const container = document.getElementById("results");
+        if (!hasAnyRequired && hasPreferred) return "medium";
 
-  container.innerHTML = "";
+      } else if (required.length > 1) {
 
-  results.forEach(d => {
+        const hasAllRequired =
+          stats.every(s => required.includes(s));
 
-    const card = document.createElement("div");
+        const hasAnyRequired =
+          required.some(r => stats.includes(r));
 
-    card.className = "card p-3 mb-3";
+        const hasPreferred =
+          stats.some(s => preferred.includes(s));
 
-    let html = `
+        if (hasAllRequired) return "high";
+
+        if (hasAnyRequired && hasPreferred) return "medium";
+
+      } else {
+
+        const hasPreferred =
+          stats.every(s => preferred.includes(s));
+
+        if (hasPreferred) return "high";
+      }
+
+      return null;
+    }
+
+    /* ---------------- BUILD DUNGEONS ---------------- */
+
+    function buildDungeons(items, spec) {
+
+      const dungeons = {};
+
+      for (const item of items) {
+
+        if (!isWeaponAllowed(item, spec)) continue;
+
+        if (!isValidItem(item, spec)) continue;
+
+        let tier = classifyItem(item, spec);
+
+        if (!tier) {
+          tier = "low";
+        }
+
+        if (!dungeons[item.dungeon]) {
+
+          dungeons[item.dungeon] = {
+            high: 0,
+            medium: 0,
+            low: 0,
+            items: []
+          };
+        }
+
+        dungeons[item.dungeon].items.push({
+          ...item,
+          tier
+        });
+
+        if (tier === "high") {
+          dungeons[item.dungeon].high++;
+        }
+
+        if (tier === "medium") {
+          dungeons[item.dungeon].medium++;
+        }
+
+        if (tier === "low") {
+          dungeons[item.dungeon].low++;
+        }
+      }
+
+      return Object.entries(dungeons)
+        .map(([name, d]) => ({
+          dungeon: name,
+          highValueCount: d.high,
+          mediumValueCount: d.medium,
+          lowValueCount: d.low,
+          items: d.items
+        }))
+        .sort((a, b) =>
+          (b.highValueCount * 2 + b.mediumValueCount) -
+          (a.highValueCount * 2 + a.mediumValueCount)
+        );
+    }
+
+    /* ---------------- RUN ---------------- */
+
+    function run() {
+
+      const spec = getSpecConfig();
+
+      if (!spec) return;
+
+      renderActiveConfig(spec);
+
+      const results = buildDungeons(data, spec);
+
+      const container = document.getElementById("results");
+
+      container.innerHTML = "";
+
+      results.forEach(d => {
+
+        const card = document.createElement("div");
+
+        card.className = "card p-3 mb-3";
+
+        let html = `
       <div class="dungeon-title">${d.dungeon}</div>
 
       <div class="muted mb-2">
         High: ${d.highValueCount}
         |
         Medium: ${d.mediumValueCount}
+        |
+        Low: ${d.lowValueCount}
       </div>
     `;
 
-    const highItems = d.items
-      .filter(i => i.tier === "high")
-      .sort((a, b) =>
-        a.inventoryType.localeCompare(b.inventoryType)
-      );
+        const highItems = d.items
+          .filter(i => i.tier === "high")
+          .sort((a, b) =>
+            a.inventoryType.localeCompare(b.inventoryType)
+          );
 
-    const mediumItems = d.items
-      .filter(i => i.tier === "medium")
-      .sort((a, b) =>
-        a.inventoryType.localeCompare(b.inventoryType)
-      );
+        const mediumItems = d.items
+          .filter(i => i.tier === "medium")
+          .sort((a, b) =>
+            a.inventoryType.localeCompare(b.inventoryType)
+          );
 
-    if (highItems.length) {
+        const lowItems = d.items
+          .filter(i => i.tier === "low")
+          .sort((a, b) =>
+            a.inventoryType.localeCompare(b.inventoryType)
+          );
 
-      html += `
+        /* HIGH */
+
+        if (highItems.length) {
+
+          html += `
         <div class="high-value mb-1">
           High Value Drops
         </div>
       `;
 
-      highItems.forEach(i => {
+          highItems.forEach(i => {
 
-        html += `
+            html += `
           <div class="item high-value">
 
             <strong>
@@ -595,20 +612,22 @@ function run() {
 
           </div>
         `;
-      });
-    }
+          });
+        }
 
-    if (mediumItems.length) {
+        /* MEDIUM */
 
-      html += `
+        if (mediumItems.length) {
+
+          html += `
         <div class="medium-value mt-3 mb-1">
           Medium Value Drops
         </div>
       `;
 
-      mediumItems.forEach(i => {
+          mediumItems.forEach(i => {
 
-        html += `
+            html += `
           <div class="item medium-value">
 
             <strong>
@@ -621,16 +640,45 @@ function run() {
 
           </div>
         `;
+          });
+        }
+
+        /* LOW */
+
+        if (lowItems.length) {
+
+          html += `
+        <div class="low-value mt-3 mb-1">
+          Low Value Drops
+        </div>
+      `;
+
+          lowItems.forEach(i => {
+
+            html += `
+          <div class="item low-value">
+
+            <strong>
+              [${i.inventoryType}${i.itemSubClass ? " " + i.itemSubClass : ""}]
+            </strong>
+
+            ${i.itemName}
+
+            (${i.firstSecondary || "-"} / ${i.secondSecondary || "-"})
+
+          </div>
+        `;
+          });
+        }
+
+        card.innerHTML = html;
+
+        container.appendChild(card);
       });
     }
 
-    card.innerHTML = html;
-
-    container.appendChild(card);
-  });
-}
-
-</script>
+  </script>
 
 </body>
+
 </html>
