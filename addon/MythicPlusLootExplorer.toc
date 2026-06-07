@@ -1,0 +1,9 @@
+## Interface: 120001, 120000, 50503
+## Title: Mythic Loot Exporter
+## Author: Degan
+## Version: 1.0
+
+Ids.lua
+HelperFunctions.lua
+MythicPlusLootExplorer.lua
+SlashCommands.lua
